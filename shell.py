@@ -1,18 +1,27 @@
 from lexer import Lexer
 
+from parser import Parser
+
 class Shell:
 
     @staticmethod
     def run():
         while True:
             text = input('basic > ')
-            result, error = Lexer(text).make_tokens()
+            tokens, lexError = Lexer(text, '<stdout>').make_tokens()
             
-            if (error):
-                print(error.to_string())
+            if (lexError):
+                print(lexError.to_string())
+                continue
+                
+            parser = Parser(tokens)
+            ast = parser.parse()
+            
+            if(ast.error):
+                print(f'{ast.error.message}')
+                continue
             else:
-                print(result)
-
+                print(ast.node)            
 
 if (__name__ == '__main__'):
     Shell.run()
